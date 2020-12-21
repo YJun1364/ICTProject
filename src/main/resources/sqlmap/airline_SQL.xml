@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.oopsw.airline.dao.AirlineDAO"> 
+	<select id="selectDate" resultType="java.lang.String"> 
+		select sysdate from dual
+	</select>
+	<select id="login" resultType="java.lang.String"> 
+		select name from staff where staff_num=#{staffNum} and pw=#{pw}
+	</select>
+	<select id="getRouteInfo" resultType="com.oopsw.airline.dao.AirRouteVO">
+	select route_code "routeCode",airport_code_dep "airportCodeDep",date_dep "dateDep",time_dep "timeDep",airport_code_arr "airportCodeArr",date_arr "dateArr",time_arr "timeArr",flight_status "flightStatus",gate"gate",reservation_seat "reservationSeat",basic_fare "basicFare",tax"tax",commission"commission",total_route_fare "totalRouteFare",airplane_code "airplaneCode"
+	from air_route
+	where route_code=#{routeCode}
+</select>
+	<select id="getRoutePassengerList" resultType="com.oopsw.airline.dao.PassengerVO"> 
+		select ticket_num "ticketNum", last_name_eng "lastNameEng", first_name_eng "firstNameEng", last_name_kor "lastNameKor", first_name_kor "firstNameKor", gender, nationality, to_char(birth,'YY.MM.DD') "birth", phone_number "phoneNumber", passport, check_in "checkIn", luggage, luggage_fee "luggageFee", seat_fee "seatFee", passenger_total_price "passengerTotalPrice", seat_number "seatNumber", clean, sleep, active, passenger.route_info_num "routeInfoNum"
+		from passenger,select_route 
+		where select_route.route_code=#{routeCode} and passenger.route_info_num=select_route.route_info_num 
+	</select>
+	<select id="getRouteInfoNum" resultType="java.lang.Integer">
+		select route_info_num from passenger where ticket_num=#{ticketNum}
+	</select>
+	<select id="getPurchaseNum" resultType="java.lang.String">
+		select purchase_num from select_route where route_info_num=#{routeInfoNum}
+	</select>
+	<select id="getPurchaseInfo" resultType="com.oopsw.airline.dao.PurchaseVO">
+		select purchase_num "purchaseNum", category, num_adult "numAdult", num_child "numChild", num_infant "numInfant", total_price "totalPrice", to_char(purchase_date,'YY.MM.DD') "purchaseDate", payment_status "paymentStatus", payment_info "paymentInfo", id
+		from purchase
+		where purchase_num = #{purchaseNum}
+	</select>
+	<select id="getPassengerInfoList" resultType="com.oopsw.airline.dao.PassengerVO"> 
+		select ticket_num "ticketNum", last_name_eng "lastNameEng", first_name_eng "firstNameEng", last_name_kor "lastNameKor", first_name_kor "firstNameKor", gender, nationality, to_char(birth,'YY.MM.DD') "birth", phone_number "phoneNumber", passport, check_in "checkIn", luggage, luggage_fee "luggageFee", seat_fee "seatFee", passenger_total_price "passengerTotalPrice", seat_number "seatNumber", clean, sleep, active, passenger.route_info_num "routeInfoNum"
+		from passenger 
+		where ticket_num=#{ticketNum} 
+	</select>
+	<select id="getAirRouteInfoList" resultType="com.oopsw.airline.dao.AirRouteVO"> 
+		select route_code "routeCode",airport_code_dep "airportCodeDep",date_dep "dateDep",time_dep "timeDep",airport_code_arr "airportCodeArr",date_arr "dateArr",time_arr "timeArr",flight_status "flightStatus",gate,reservation_seat "reservationSeat",basic_fare "basicFare",tax,commission,total_route_fare "totalRouteFare",airplane_code "airplaneCode" 
+		from air_route
+	</select>
+	<select id="getSearchedAirRouteInfoList" resultType="com.oopsw.airline.dao.AirRouteVO"> 
+		select route_code "routeCode",airport_code_dep "airportCodeDep",date_dep "dateDep",time_dep "timeDep",airport_code_arr "airportCodeArr",date_arr "dateArr",time_arr "timeArr",flight_status "flightStatus",gate,reservation_seat "reservationSeat",basic_fare "basicFare",tax,commission,total_route_fare "totalRouteFare",airplane_code "airplaneCode" 
+		from air_route
+		where airport_code_dep=#{airportCodeDep} and airport_code_arr=#{airportCodeArr} and date_dep=#{dateDep}
+	</select>
+	<select id="getSelectRouteInfo" resultType="com.oopsw.airline.dao.SelectRouteVO">
+		select route_info_num "routeInfoNum", route_code "routeCode", purchase_num "purchaseNum"
+		from select_route
+		where purchase_num=#{purchaseNum}
+	</select>
+	<select id="getBookingInfo" parameterType="Integer" resultType="com.oopsw.airline.dao.PassengerVO"> 
+		select ticket_num "ticketNum", last_name_eng "lastNameEng", first_name_eng "firstNameEng", last_name_kor "lastNameKor", first_name_kor "firstNameKor", gender, nationality, to_char(birth,'YY.MM.DD') "birth", phone_number "phoneNumber", passport, check_in "checkIn", luggage, luggage_fee "luggageFee", seat_fee "seatFee", passenger_total_price "passengerTotalPrice", seat_number "seatNumber", clean, sleep, active, route_info_num "routeInfoNum"
+		from passenger
+		where route_info_num=#{routeInfoNum}
+	</select>
+	<update id="setPassport">
+		update passenger set passport=#{passport} where ticket_num=#{ticketNum}	
+	</update>
+	<select id="getPassengerInfo" resultType="com.oopsw.airline.dao.PassengerVO"> 
+		select ticket_num "ticketNum", last_name_eng "lastNameEng", first_name_eng "firstNameEng", last_name_kor "lastNameKor", first_name_kor "firstNameKor", gender, nationality, to_char(birth,'YY.MM.DD') "birth", phone_number "phoneNumber", passport, check_in "checkIn", luggage, luggage_fee "luggageFee", seat_fee "seatFee", passenger_total_price "passengerTotalPrice", seat_number "seatNumber", clean, sleep, active, passenger.route_info_num "routeInfoNum"
+		from passenger 
+		where ticket_num=#{ticketNum} 
+	</select>
+	<update id="setHabitInfo">
+		update passenger set clean=#{clean}, active=#{active}, sleep=#{sleep} where ticket_num=#{ticketNum}	
+	</update>
+		<select id="getMainHabit" resultType="com.oopsw.airline.dao.PassengerVO"> 
+		select clean, sleep, active	from passenger,select_route	where select_route.route_code=#{routeCode} and passenger.route_info_num=select_route.route_info_num 
+	</select>
+		<select id="getRouteInfoNumList" resultType="java.lang.String">
+		select route_info_num "routeInfoNum" from select_route	where route_code=#{routeCode}
+	</select>
+		<select id="getReservationSeats" resultType="java.lang.String">
+		select seat_number "seatNumber"	from passenger	where route_info_num=#{routeInfoNum}
+	</select>
+		<update id="setSeatNumber">
+		update passenger set seat_number=#{seatNumber} where ticket_num=#{ticketNum}
+	</update>
+	<select id="searchAirRoute" resultType="com.oopsw.airline.dao.AirRouteVO">
+		select route_code "routeCode",airport_code_dep "airportCodeDep",date_dep "dateDep",time_dep "timeDep",airport_code_arr "airportCodeArr",date_arr "dateArr",time_arr "timeArr",flight_status "flightStatus",gate,reservation_seat "reservationSeat",basic_fare "basicFare",tax,commission,total_route_fare "totalRouteFare",airplane_code "airplaneCode"
+		from air_route 
+		where airport_code_dep=#{airportCodeDep}and airport_code_arr =#{airportCodeArr} and date_dep=#{dateDep}
+	</select>
+	<select id="searchMember" resultType="com.oopsw.airline.dao.AirlineMemberVO">
+		select	last_name_eng"lastNameEng",first_name_eng"firstNameEng",phone_number"phoneNumber",email"email",gender"gender",nationality"nationality",birth"birth",clean"clean",sleep"sleep",active"active"
+		from airline_member 
+		where id=#{purchaseId}
+	</select>
+	<select id="getPurchaseName" resultType="com.oopsw.airline.dao.AirlineMemberVO">
+		select first_name_eng "firstNameEng", last_name_eng "lastNameEng" from airline_member where id=#{id}
+	</select>
+	<insert id="addPurchaseInfo">
+		insert into purchase values(#{purchaseNum},#{category},#{numAdult},#{numChild},#{numInfant},#{totalPrice},sysdate,'Y',#{paymentInfo},#{id})
+	</insert>
+	<insert id="addSelectRoute">
+		insert into select_route values(#{routeInfoNum},#{routeCode},#{purchaseNum})
+	</insert>
+	<insert id="addPassengerInfo">
+		insert into passenger values(#{ticketNum}, #{lastNameEng}, #{firstNameEng}, #{lastNameKor}, #{firstNameKor},#{gender},#{nationality},#{birth},#{phoneNumber},#{passport},#{checkIn},#{luggage},#{luggageFee},#{seatFee},#{passengerTotalPrice},#{seatNumber},#{clean},#{sleep},#{active},#{routeInfoNum})
+	</insert>
+	<update id="updateCheckIn">
+		update passenger set check_in='Y' where ticket_num=#{ticketNum}
+	</update>
+	<select id="checkWorkCode" resultType="java.lang.Integer">
+		select work_code from staff where staff_num=#{staffNum}
+	</select>
+</mapper>
